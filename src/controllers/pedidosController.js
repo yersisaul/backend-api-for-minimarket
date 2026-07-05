@@ -43,15 +43,14 @@ exports.obtenerPorId = async (req, res) => {
 exports.crear = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
-    const { numero_pedido, cliente_id, vendedor_id, detalles, metodo_pago, direccion_entrega, observaciones } = req.body;
+    const { cliente_id, vendedor_id, detalles, metodo_pago, direccion_entrega, observaciones } = req.body;
 
     let subtotal = 0;
 
     const pedido = await Pedido.create(
       {
-        numero_pedido,
         cliente_id,
-        vendedor_id,
+        vendedor_id: req.usuario.id,
         metodo_pago,
         direccion_entrega,
         observaciones,
@@ -82,7 +81,7 @@ exports.crear = async (req, res) => {
       );
     }
 
-    const impuesto = subtotal * 0.16;
+    const impuesto = subtotal * 0.18;
     const total = subtotal + impuesto;
 
     await pedido.update(

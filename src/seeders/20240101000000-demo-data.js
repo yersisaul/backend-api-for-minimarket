@@ -136,6 +136,25 @@ module.exports = {
       }
     ]);
 
+    // Create productos with image URLs
+    const path = require('path');
+    const fs = require('fs');
+
+    const imagesDir = path.join(__dirname, '../../public/images/productos');
+    let imageFiles = [];
+    if (fs.existsSync(imagesDir)) {
+      imageFiles = fs.readdirSync(imagesDir).filter(file => 
+        ['.jpg', '.jpeg', '.png', '.webp'].includes(path.extname(file).toLowerCase())
+      );
+    }
+    console.log('📸 Archivos de imagen encontrados:', imageFiles);
+
+    // Función para encontrar la imagen por SKU
+    const getImageUrl = (sku) => {
+      const file = imageFiles.find(f => f.includes(sku));
+      return file ? `/images/productos/${file}` : null;
+    };
+    
     // Create productos
     await queryInterface.bulkInsert('productos', [
       {
@@ -148,6 +167,8 @@ module.exports = {
         stock_maximo: 100,
         stock_actual: 50,
         estado: 'ACTIVO',
+        precio_venta: 1.50,
+        url_imagen: getImageUrl('PRDR-0001'),
         created_at: new Date(),
         updated_at: new Date()
       },
@@ -161,6 +182,8 @@ module.exports = {
         stock_maximo: 150,
         stock_actual: 80,
         estado: 'ACTIVO',
+        precio_venta: 0.80,
+        url_imagen: getImageUrl('PRDR-0002'),
         created_at: new Date(),
         updated_at: new Date()
       },
@@ -174,6 +197,8 @@ module.exports = {
         stock_maximo: 50,
         stock_actual: 35,
         estado: 'ACTIVO',
+        precio_venta: 2.50,
+        url_imagen: getImageUrl('PRDR-0003'),
         created_at: new Date(),
         updated_at: new Date()
       },
@@ -187,6 +212,8 @@ module.exports = {
         stock_maximo: 40,
         stock_actual: 25,
         estado: 'ACTIVO',
+        precio_venta: 3.00,
+        url_imagen: getImageUrl('PRDR-0004'),
         created_at: new Date(),
         updated_at: new Date()
       },
@@ -200,6 +227,8 @@ module.exports = {
         stock_maximo: 60,
         stock_actual: 40,
         estado: 'ACTIVO',
+        precio_venta: 1.20,
+        url_imagen: getImageUrl('PRDR-0005'),
         created_at: new Date(),
         updated_at: new Date()
       },
@@ -213,6 +242,8 @@ module.exports = {
         stock_maximo: 100,
         stock_actual: 60,
         estado: 'ACTIVO',
+        precio_venta: 0.80,
+        url_imagen: getImageUrl('PRDR-0006'),
         created_at: new Date(),
         updated_at: new Date()
       },
@@ -226,6 +257,8 @@ module.exports = {
         stock_maximo: 50,
         stock_actual: 30,
         estado: 'ACTIVO',
+        precio_venta: 2.00,
+        url_imagen: getImageUrl('PRDR-0007'),
         created_at: new Date(),
         updated_at: new Date()
       },
@@ -239,6 +272,8 @@ module.exports = {
         stock_maximo: 60,
         stock_actual: 40,
         estado: 'ACTIVO',
+        precio_venta: 1.50,
+        url_imagen: getImageUrl('PRDR-0008'),
         created_at: new Date(),
         updated_at: new Date()
       }

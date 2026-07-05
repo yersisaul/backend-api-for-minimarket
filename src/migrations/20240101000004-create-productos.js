@@ -48,6 +48,14 @@ module.exports = {
         type: Sequelize.ENUM('ACTIVO', 'INACTIVO', 'DESCONTINUADO'),
         defaultValue: 'ACTIVO'
       },
+      precio_venta: {
+        type: Sequelize.DECIMAL(10, 2),
+        allowNull: false,
+        defaultValue: 0.00
+      },
+      url_imagen: {
+        type: Sequelize.STRING(500)
+      },
       created_at: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW

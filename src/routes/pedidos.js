@@ -109,7 +109,7 @@ router.get('/cliente/:cliente_id', verifyToken, pedidosController.obtenerPorClie
  *               cliente_id:
  *                 type: integer
  *                 description: Identificador del cliente que realiza el pedido
- *               productos:
+ *               detalles:
  *                 type: array
  *                 description: Lista de productos incluidos en el pedido
  *                 items:
@@ -142,7 +142,7 @@ router.get('/cliente/:cliente_id', verifyToken, pedidosController.obtenerPorClie
  *       500:
  *         description: Error interno del servidor
  */
-router.post('/', verifyToken, verifyRole(['ADMIN', 'VENDEDOR']), pedidosController.crear);
+router.post('/', verifyToken, verifyRole(['ADMIN', 'VENDEDOR', 'CLIENTE']), pedidosController.crear);
 
 /**
  * @swagger

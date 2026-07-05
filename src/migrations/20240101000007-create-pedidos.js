@@ -4,7 +4,6 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('pedidos', {
       id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
-      numero_pedido: { type: Sequelize.STRING(50), allowNull: false, unique: true },
       cliente_id: { type: Sequelize.INTEGER, allowNull: false, references: { model: 'usuarios', key: 'id' } },
       vendedor_id: { type: Sequelize.INTEGER, references: { model: 'usuarios', key: 'id' } },
       fecha_pedido: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },

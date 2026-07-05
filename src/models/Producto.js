@@ -11,12 +11,16 @@ module.exports = (sequelize) => {
     stock_minimo: {type: DataTypes.INTEGER, defaultValue: 10},
     stock_maximo: {type: DataTypes.INTEGER, defaultValue: 1000},
     stock_actual: {type: DataTypes.INTEGER, defaultValue: 0},
-    estado: {type: DataTypes.ENUM('ACTIVO', 'INACTIVO', 'DESCONTINUADO'), defaultValue: 'ACTIVO'}
+    estado: {type: DataTypes.ENUM('ACTIVO', 'INACTIVO', 'DESCONTINUADO'), defaultValue: 'ACTIVO'},
+    precio_venta: {type: DataTypes.DECIMAL(10, 2), allowNull: false, defaultValue: 0.00},
+    url_imagen: {type: DataTypes.STRING(500), allowNull: true}
+
   }, {
     tableName: 'productos',
     timestamps: true,
     underscored: true     // usa snake_case: created_at, updated_at
   });
 
+  Producto.belongsTo(sequelize.models.Categoria, { foreignKey: 'categoria_id', as: 'Categoria' }); // Relación con categoría
   return Producto;
 };

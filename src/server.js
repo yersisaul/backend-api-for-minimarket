@@ -19,8 +19,14 @@ const dashboardRoutes = require('./routes/dashboard');
 const app = express();
 
 // Middleware
-app.use(helmet());
-app.use(cors());
+const corsOptions = {
+  origin: '*', // En producción, especifica 'http://tu-frontend.com'
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true // Si usas cookies o autenticación
+};
+app.use(cors(corsOptions));
+app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } })); // Permite recursos desde cualquier origen
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -57,6 +63,54 @@ const swaggerOptions = {
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+//  ------------- Configuracion de multer ---------------------
+const path = require('path');
+const multer = require('multer');
+const fs = require('fs');
+
+// Asegura que la carpeta exista
+const uploadDir = path.join(__dirname, 'public/images/productos');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Configuración de almacenamiento
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    // El nombre del archivo será el SKU + extensión
+    // Necesitamos que req.productoSku esté disponible, pero en el controlador aún no lo tenemos.
+    // Una estrategia: generar un nombre temporal y luego renombrar en el controlador.
+    // O mejor: el controlador recibe el SKU después de crear el producto, y renombra el archivo.
+    // Vamos a usar un nombre temporal con timestamp para evitar colisiones.
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'temp-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = /jpeg|jpg|png|webp/;
+  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = allowedTypes.test(file.mimetype);
+  if (mimetype && extname) {
+    return cb(null, true);
+  } else {
+    cb(new Error('Solo se permiten imágenes (jpeg, jpg, png, webp)'));
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: fileFilter
+});
+
+// Servir la carpeta pública
+app.use('/images', express.static(path.join(__dirname, '../public/images')));
+
 
 // Routes
 app.use('/api/auth', authRoutes);

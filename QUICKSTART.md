@@ -26,6 +26,7 @@ JWT_SECRET=your_secret_key_here_change_in_production
 ### Step 3: Install Dependencies
 ```bash
 pnpm install
+pnpm add multer
 ```
 
 ### Step 4: Run Migrations

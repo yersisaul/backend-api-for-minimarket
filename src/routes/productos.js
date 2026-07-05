@@ -3,6 +3,8 @@ const router = express.Router();
 const productosController = require('../controllers/productosController');
 const { verifyToken, verifyRole } = require('../middleware/auth');
 
+const upload = require('../middleware/upload'); // Importar el middleware de subida de archivos
+
 /**
  * @swagger
  * /api/productos:
@@ -98,14 +100,14 @@ router.get('/bajo-stock/lista', verifyToken, productosController.obtenerBajoStoc
  * /api/productos:
  *   post:
  *     summary: Crear producto
- *     description: Registra un nuevo producto en el sistema.
+ *     description: Registra un nuevo producto en el sistema. Se puede subir una imagen.
  *     tags: [Productos]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -118,7 +120,14 @@ router.get('/bajo-stock/lista', verifyToken, productosController.obtenerBajoStoc
  *               unidad_medida:
  *                 type: string
  *                 enum: ['Unidad', 'Botella', 'Bolsa', 'Paquete']
- *             required: [nombre, categoria_id, unidad_medida]
+ *               precio_venta:
+ *                 type: number
+ *                 format: float
+ *               imagen:
+ *                 type: string
+ *                 format: binary
+ *                 description: Imagen del producto (archivo)
+ *             required: [nombre, categoria_id, unidad_medida, precio_venta]
  *     responses:
  *       201:
  *         description: Producto creado correctamente
@@ -131,14 +140,14 @@ router.get('/bajo-stock/lista', verifyToken, productosController.obtenerBajoStoc
  *       500:
  *         description: Error del servidor
  */
-router.post('/', verifyToken, verifyRole(['ADMIN']), productosController.crear);
+router.post('/', verifyToken, verifyRole(['ADMIN']), upload.single('imagen'), productosController.crear);
 
 /**
  * @swagger
  * /api/productos/{id}:
  *   put:
  *     summary: Actualizar producto
- *     description: Actualiza los datos de un producto existente.
+ *     description: Actualiza los datos de un producto existente. Se puede subir una nueva imagen (opcional).
  *     tags: [Productos]
  *     security:
  *       - bearerAuth: []
@@ -152,7 +161,7 @@ router.post('/', verifyToken, verifyRole(['ADMIN']), productosController.crear);
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -167,6 +176,14 @@ router.post('/', verifyToken, verifyRole(['ADMIN']), productosController.crear);
  *                 enum: ['Unidad', 'Botella', 'Bolsa', 'Paquete']
  *               stock_actual:
  *                 type: integer
+ *               precio_venta:
+ *                 type: number
+ *                 format: float
+ *               imagen:
+ *                 type: string
+ *                 format: binary
+ *                 description: Nueva imagen del producto (opcional)
+ *             required: []
  *     responses:
  *       200:
  *         description: Producto actualizado correctamente
@@ -181,7 +198,7 @@ router.post('/', verifyToken, verifyRole(['ADMIN']), productosController.crear);
  *       500:
  *         description: Error del servidor
  */
-router.put('/:id', verifyToken, verifyRole(['ADMIN']), productosController.actualizar);
+router.put('/:id', verifyToken, verifyRole(['ADMIN']), upload.single('imagen'), productosController.actualizar);
 
 /**
  * @swagger

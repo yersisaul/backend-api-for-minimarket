@@ -70,7 +70,7 @@ router.get('/producto/:producto_id', verifyToken, inventarioController.obtenerPo
 
 /**
  * @swagger
- * /api/inventario/resumen:
+ * /api/inventario/resumen/estadisticas:
  *   get:
  *     summary: Obtener resumen del inventario
  *     tags: [Inventario]
